@@ -20,7 +20,7 @@ app.use(cors());
 app.use('/api', bloodSearchRequestRoutes);
 
 setInterval(async () => {
-  const bloodBankCoordinates = { latitude: 40.123, longitude: 32.456 };
+  const bloodBankCoordinates = [40.123, 32.456];
   await checkBloodRequestsProximity(bloodBankCoordinates);
 }, 10000);
 

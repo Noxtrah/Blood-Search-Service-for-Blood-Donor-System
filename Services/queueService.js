@@ -6,7 +6,6 @@ const queueName = "unfound-blood-requests";
 
 // create a Service Bus client using the connection string to the Service Bus namespace
 const sbClient = new ServiceBusClient(connectionString);
-const receiver = sbClient.createReceiver(queueName);
 
 // createSender() can also be used to create a sender for a topic.
 const retryOptions = {
@@ -110,22 +109,54 @@ const fixUnquotedKeys = (jsonString) => {
 
 export async function getBloodRequestsInQueue() {
   const bloodRequests = [];
+  const receiver = sbClient.createReceiver(queueName);
 
   try {
     // Receive messages from the queue
     const messages = await receiver.receiveMessages(10, {
       // Adjust the number of messages to receive as needed
     });
-
+    await receiver.close();
     // Process received messages
     for (const message of messages) {
       //console.log("Received message:", message);
       try {
-        const bloodRequest = fixUnquotedKeys(message.body);
+        const jsonString = message.body
+    .replace(/(['"])?([a-zA-Z0-9_]+)(['"])?:/g, '"$2":')
+    .replace(/'([^']+)'/g, '"$1"'); /* Turns this
+    {
+    "BloodRequestId": 2,
+    "Hospital": 'Hospital', 
+    "City": 'Adana', 
+    "Town": 'Feke', 
+    "BloodType": 'A+', 
+    "Units": 2, 
+    "ContactEmail": 'test@hotmail.com' 
+    } 
+    into this: 
+    {
+    "BloodRequestId": 2,
+    "Hospital": "Hospital",
+    "City": "Adana",
+    "Town": "Feke",
+    "BloodType": "A+",
+    "Units": 2,
+    "ContactEmail": "test@hotmail.com"
+     } */
+        // console.log("JSON String: ", jsonString);
+        const bloodRequest = JSON.parse(jsonString);
 
+        // console.log("Blood Request: ", bloodRequest);
+        // console.log("Blood Request City: ", bloodRequest["City"]);
+        if (!bloodRequest || !bloodRequest.City) {
+          console.log(`Warning: Blood request ${message.body.BloodRequestId} has no 'City' property.`);
+          continue; // Skip this iteration and move to the next message
+        }
+
+        //console.log("Blood Request: ", bloodRequest);
         // Add the blood request to the array
         bloodRequests.push(bloodRequest);
-        console.log("Blood Request: ", bloodRequest);
+
       } catch (parseError) {
         console.error('Error parsing JSON from message:', parseError);
       }
@@ -133,19 +164,9 @@ export async function getBloodRequestsInQueue() {
   } catch (error) {
     console.error('Error getting blood requests from the queue:', error);
     throw error;
+  } finally {
+    await receiver.close();
   }
-  await receiver.close();
 
   return bloodRequests;
-}
-
-export async function initializeQueueService() {
-  // Initialize the Service Bus client and create the receiver
-  await sbClient.init();
-}
-
-export async function closeQueueService() {
-  // Close the receiver and the Service Bus client
-  await receiver.close();
-  await sbClient.close();
 }
