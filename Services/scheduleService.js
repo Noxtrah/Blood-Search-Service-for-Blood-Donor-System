@@ -1,5 +1,15 @@
 //scheduleService.js
-const bloodBankCoordinates = { latitude: 40.123, longitude: 32.456 };
+import schedule from 'node-schedule';
+import { getBloodBankCoordinates } from './geolocationService.js';
+import { checkBloodRequestsProximity } from '../Services/geolocationService.js';
 
-// Check proximity of blood requests in the queue to the blood bank
-await checkBloodRequestsProximity(bloodBankCoordinates);
+// Fetch blood bank coordinates dynamically
+const bloodBankCoordinates = await getBloodBankCoordinates();
+
+// Schedule the function to run every day at 1:00 AM
+schedule.scheduleJob('0 0 1 * * *', async () => {
+    await checkBloodRequestsProximity(bloodBankCoordinates);
+  });
+
+// Log a message when the schedule is initialized
+console.log('Scheduled job initialized.');

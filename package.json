@@ -16,9 +16,12 @@
     "axios": "^1.6.5",
     "body-parser": "^1.20.2",
     "cors": "^2.8.5",
+    "dotenv": "^16.3.1",
     "express": "^4.18.2",
     "mssql": "^10.0.1",
     "node-fetch": "^3.3.2",
+    "node-schedule": "^2.1.1",
+    "nodemailer": "^6.9.8",
     "util": "^0.12.5"
   }
 }

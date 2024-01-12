@@ -19,10 +19,10 @@ app.use(cors());
 
 app.use('/api', bloodSearchRequestRoutes);
 
-setInterval(async () => {
-  const bloodBankCoordinates = [40.123, 32.456];
-  await checkBloodRequestsProximity(bloodBankCoordinates);
-}, 10000);
+// setInterval(async () => {
+//   const bloodBankCoordinates = [40.123, 32.456];
+//   await checkBloodRequestsProximity(bloodBankCoordinates);
+// }, 10000);
 
 app.listen(PORT, () => {
   console.log(`Staff Service is listening at http://localhost:${PORT}`);
