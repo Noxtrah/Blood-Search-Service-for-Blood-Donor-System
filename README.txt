@@ -15,6 +15,7 @@ GITHUB LINKS:
 
 
 VIDEO LINK:
+(Note: I noticed that my voice was low at the beginning of the video due to the microphone. It can be heard when the volume is turned up high enough. About halfway through the video, my voice volume returns to normal.)
 -https://drive.google.com/file/d/1hjfoLKzS7pj1UPbMX9lL_xWeDfdwur37/view?usp=sharing
 
 
